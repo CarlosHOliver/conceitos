@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <!-- Configurações de fontes e meta tags -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapas de Processos e POPs FAEN/UFGD</title>
+
+    <style>
+        /* Estilo do corpo da página */
+        body {
+            font-family: "Noto Sans";
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            min-height: 80vh;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+
+        /* Estilo para os parágrafos dentro da página */
+        p {
+            font-family: "Noto Sans", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: 200;
+            font-style: normal;
+            font-variation-settings: "wdth" 100;
+            cursor: pointer;
+            color: #ffffff;
+            margin: 20px 0;
+            transition: color 0.5s ease, background-color 0.5s;
+            background-color: rgb(20, 73, 221);
+            padding: 10px;
+            border-radius: 15px 15px 15px 15px;
+        }
+
+        /* Estilo para quando o usuário passa o mouse sobre um parágrafo */
+        p:hover {
+            color: #ffffff;
+            background-color: rgb(15, 96, 167);
+        }
+
+        /* Estilo do título */
+        h1 {
+            margin-top: 10px;
+            font-family: Arial, sans-serif;
+            display: flex;
+            max-width: 800px;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* Estilo do contêiner que envolve os tópicos */
+        div {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        /* Contêiner com largura e alinhamento centralizado para os tópicos */
+        .container {
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        /* Estilo das imagens de tópico, inicialmente invisíveis */
+        .topic-image {
+            display: none;
+            width: 100%;
+            margin: 10px 0;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        /* Quando a imagem de tópico está visível */
+        .topic-image.visible {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Estilo do modal para imagem ampliada */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Estilo da imagem dentro do modal */
+        .modal img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Mostrar o modal quando ele está ativo */
+        .modal.active {
+            display: flex;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Título principal da página -->
+    <h1>Mapas de Processos e <br>Procedimentos Operacionais Padrão FAEN/UFGD</h1>
+    <div class="container">
+        <h2>Seção de Laboratórios (SELAB/FAEN)</h2>
+        <!-- Tópicos com a funcionalidade de mostrar imagens ao serem clicados -->
+        <p class="topic" data-image="imagem1">Solicitação de Reservas de Laboratório de Informática
+            <img src="https://i.imgur.com/nwy60VL.png" alt="Solicitação de Reservas de Laboratório de Informática" class="topic-image" id="imagem1">
+        </p>
+        <p class="topic" data-image="imagem2">Solicitação de Reservas de Laboratórios de Ensino da Eng. de Alimentos
+            <img src="imagem1.png" alt="Imagem 2" class="topic-image" id="imagem2">
+        </p>
+        <p class="topic" data-image="imagem3">Solicitação de Reservas de Laboratórios de Ensino da Eng. Civil
+            <img src="imagem1.png" alt="Imagem 3" class="topic-image" id="imagem3">
+        </p>
+        <p class="topic" data-image="imagem4">Solicitação de Reservas de Laboratórios de Ensino da Eng. de Energia
+            <img src="imagem1.png" alt="Imagem 4" class="topic-image" id="imagem4">
+        </p>
+        <p class="topic" data-image="imagem5">Solicitação de Reservas de Laboratórios de Ensino da Eng. de Mecânica
+            <img src="imagem1.png" alt="Imagem 5" class="topic-image" id="imagem5">
+        </p>
+        <p class="topic" data-image="imagem6">Solicitação de Reservas de Laboratórios de Ensino da Eng. de Produção
+            <img src="imagem1.png" alt="Imagem 6" class="topic-image" id="imagem6">
+        </p>
+        <p class="topic" data-image="imagem7">Solicitação Aulas Práticas
+            <img src="imagem1.png" alt="Imagem 7" class="topic-image" id="imagem7">
+        </p>
+    </div>
+
+    <!-- Modal para visualização da imagem ampliada -->
+    <div id="imageModal" class="modal">
+        <img id="modalImage" src="" alt="Imagem ampliada">
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Seleciona todos os tópicos na página
+            const topics = document.querySelectorAll(".topic");
+
+            // Seleciona o modal e a imagem dentro dele
+            const modal = document.getElementById("imageModal");
+            const modalImage = document.getElementById("modalImage");
+
+            // Função para revelar ou ocultar a imagem ao clicar nos tópicos
+            topics.forEach(topic => {
+                topic.addEventListener("click", function () {
+                    const imageId = this.getAttribute("data-image");
+                    const imageElement = document.getElementById(imageId);
+
+                    // Verifica se a imagem está visível e altera seu estado
+                    if (imageElement.classList.contains("visible")) {
+                        imageElement.classList.remove("visible");
+                    } else {
+                        imageElement.classList.add("visible");
+                    }
+                });
+            });
+
+            // Função para abrir o modal com a imagem ampliada ao clicar na imagem revelada
+            document.querySelectorAll(".topic-image").forEach(image => {
+                image.addEventListener("click", function (e) {
+                    e.stopPropagation(); // Impede o fechamento do modal ao clicar na imagem
+                    modalImage.src = this.src; // Define a imagem do modal
+                    modal.classList.add("active"); // Torna o modal visível
+                });
+            });
+
+            // Função para fechar o modal ao clicar fora da imagem
+            modal.addEventListener("click", function () {
+                modal.classList.remove("active"); // Fecha o modal
+                modalImage.src = ""; // Limpa a imagem do modal
+            });
+        });
+    </script>
+</body>
+
+</html>
